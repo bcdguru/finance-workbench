@@ -17,7 +17,8 @@ finance-workbench/
 ├── docs/
 │   ├── PRD.md                 # product requirements — start here
 │   ├── architecture.md        # front-end shell, adapter layer, LLM harness
-│   └── roadmap.md             # phased delivery plan
+│   ├── roadmap.md             # phased product plan
+│   └── delivery-roadmap.md    # build · test · deploy view with exit gates
 ├── apps/
 │   └── web/                   # workbench shell (Vite + React + IBM Carbon)
 ├── packages/
