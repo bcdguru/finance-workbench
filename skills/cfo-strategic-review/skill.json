@@ -1,0 +1,32 @@
+{
+  "name": "cfo-strategic-review",
+  "version": "1.0.0",
+  "description": "Five-lens adversarial diligence on a Strategic Financial Thesis. Returns GREEN/YELLOW/ORANGE/RED. Consumes the cfo-office-hours artifact.",
+  "mode": "headless",
+  "upstream": "cfo-office-hours",
+  "artifactKind": "strategic-review",
+  "verdictField": "verdict",
+  "verdictVocabulary": ["GREEN", "YELLOW", "ORANGE", "RED"],
+  "modelDefault": "claude-fable-5",
+  "artifactSchema": {
+    "type": "object",
+    "required": ["title", "lenses", "verdict", "recommended_next_step"],
+    "properties": {
+      "title": { "type": "string" },
+      "lenses": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["lens", "finding"],
+          "properties": {
+            "lens": { "type": "string" },
+            "finding": { "type": "string" },
+            "concern": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        }
+      },
+      "verdict": { "type": "string", "enum": ["GREEN", "YELLOW", "ORANGE", "RED"] },
+      "recommended_next_step": { "type": "string" }
+    }
+  }
+}

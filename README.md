@@ -20,21 +20,38 @@ finance-workbench/
 │   ├── roadmap.md             # phased product plan
 │   └── delivery-roadmap.md    # build · test · deploy view with exit gates
 ├── apps/
-│   └── web/                   # workbench shell (Vite + React + IBM Carbon)
+│   └── web/                   # workbench shell (Vite + React + IBM Carbon) — Phase 1
 ├── packages/
-│   ├── canonical-model/       # the canonical finance data model (CFDM)
-│   └── adapters/              # one package per platform connector
-│       ├── sap-fi/
-│       ├── oracle-fusion/
-│       ├── ariba/
-│       └── onestream/
-├── harness/                   # LLM-agnostic backend: gateway, skill runner, artifact store
-└── skills/                    # persona skill chains (gstack pattern)
+│   ├── canonical-model/       # @fw/canonical-model — the CFDM (built)
+│   ├── adapter-sdk/           # @fw/adapter-sdk — the published adapter contract (built)
+│   └── adapters/              # one package per platform connector — Phase 1+
+│       ├── sap-fi/  oracle-fusion/  ariba/  onestream/
+├── harness/                   # @fw/harness — LLM gateway, skill runner, artifact store (built)
+└── skills/                    # persona skill chains (gstack pattern) — CFO chain ported
 ```
 
-## Status
+## Status — Phase 0 (foundation) in progress
 
-Pre-build. The PRD ([docs/PRD.md](docs/PRD.md)) and architecture ([docs/architecture.md](docs/architecture.md)) are the current deliverables; see [docs/roadmap.md](docs/roadmap.md) for sequencing.
+The contracts and the LLM-agnostic harness exist and are tested. See [docs/delivery-roadmap.md](docs/delivery-roadmap.md) for the phase gates.
+
+| Built | What |
+|---|---|
+| [@fw/canonical-model](packages/canonical-model) | CFDM v0.1 entities with mandatory provenance |
+| [@fw/adapter-sdk](packages/adapter-sdk) | adapter contract + certification skeleton |
+| [@fw/harness](harness) | provider gateway, skill registry/runner, artifact store |
+| [skills/](skills) | CFO chain ported from finance-gstack (office-hours → strategic-review → forensic-audit) |
+
+**Phase 0 exit gate (met):** the CFO chain runs end-to-end through the harness against two different LLM providers, producing schema-valid, verdict-bearing artifacts.
+
+```bash
+npm install      # workspaces (Node 20+)
+npm test         # exit gate — CFO chain across two providers, sequencing, fallback, schema
+npm run demo     # watch the chain run on a scripted provider
+```
+
+> First-time `npm install` may trip a dependency's lifecycle script in a sandboxed shell; rerun, or use `npm install --ignore-scripts` (the toolchain needs no install scripts).
+
+Next: SAP FI adapter (read-only) and the CFO + FP&A workbenches on real data — Phase 1.
 
 ## Design lineage
 

@@ -1,0 +1,56 @@
+{
+  "name": "cfo-office-hours",
+  "version": "1.0.0",
+  "description": "Frame a capex or strategic-initiative bet before any modeling. Produces a Strategic Financial Thesis the downstream CFO skills consume.",
+  "mode": "interactive",
+  "upstream": null,
+  "artifactKind": "strategic-thesis",
+  "verdictField": "verdict",
+  "verdictVocabulary": ["READY_TO_REVIEW", "NOT_READY"],
+  "modelDefault": "claude-fable-5",
+  "artifactSchema": {
+    "type": "object",
+    "required": [
+      "title",
+      "decision_type",
+      "unit_of_analysis",
+      "value_thesis",
+      "load_bearing_assumptions",
+      "verdict"
+    ],
+    "properties": {
+      "title": { "type": "string" },
+      "decision_type": {
+        "type": "string",
+        "enum": ["Capex", "Strategic initiative", "Both"]
+      },
+      "unit_of_analysis": { "type": "string" },
+      "value_thesis": {
+        "type": "object",
+        "required": ["mechanism", "for_whom", "one_sentence"],
+        "properties": {
+          "mechanism": { "type": "string" },
+          "for_whom": { "type": "string" },
+          "one_sentence": { "type": "string" }
+        }
+      },
+      "cost_of_inaction": { "type": "string" },
+      "load_bearing_assumptions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["assumption", "confidence", "if_wrong"],
+          "properties": {
+            "assumption": { "type": "string" },
+            "confidence": { "type": "string", "enum": ["H", "M", "L"] },
+            "if_wrong": { "type": "string" }
+          }
+        }
+      },
+      "weakest_assumption": { "type": "string" },
+      "asymmetry": { "type": "string" },
+      "weakest_answer": { "type": "string" },
+      "verdict": { "type": "string", "enum": ["READY_TO_REVIEW", "NOT_READY"] }
+    }
+  }
+}

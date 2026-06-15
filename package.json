@@ -1,0 +1,21 @@
+{
+  "name": "finance-workbench",
+  "private": true,
+  "type": "module",
+  "description": "Persona workbenches for the Office of the CFO with an LLM-agnostic Office Hours harness.",
+  "workspaces": [
+    "packages/canonical-model",
+    "packages/adapter-sdk",
+    "harness"
+  ],
+  "scripts": {
+    "test": "node --import tsx --test harness/test/chain.e2e.test.ts",
+    "demo": "node --import tsx harness/src/demo.ts",
+    "typecheck": "tsc -p harness/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

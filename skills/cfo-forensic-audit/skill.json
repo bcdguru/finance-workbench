@@ -1,0 +1,40 @@
+{
+  "name": "cfo-forensic-audit",
+  "version": "1.0.0",
+  "description": "Six-step assumption stress-test on 1-4 load-bearing assumptions. Returns PROCEED/PROCEED_WITH_VERIFICATIONS/REWORK/DO_NOT_MODEL. Consumes the cfo-strategic-review artifact.",
+  "mode": "headless",
+  "upstream": "cfo-strategic-review",
+  "artifactKind": "forensic-audit",
+  "verdictField": "verdict",
+  "verdictVocabulary": ["PROCEED", "PROCEED_WITH_VERIFICATIONS", "REWORK", "DO_NOT_MODEL"],
+  "modelDefault": "claude-fable-5",
+  "artifactSchema": {
+    "type": "object",
+    "required": ["title", "assumptions_audited", "verdict", "portfolio_recommendation"],
+    "properties": {
+      "title": { "type": "string" },
+      "assumptions_audited": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["assumption", "base_rate", "kill_threshold", "verdict"],
+          "properties": {
+            "assumption": { "type": "string" },
+            "base_rate": { "type": "string" },
+            "kill_threshold": { "type": "string" },
+            "headroom": { "type": "string" },
+            "verdict": {
+              "type": "string",
+              "enum": ["HOLDS", "HOLDS_WITH_CONDITIONS", "WEAK", "REJECTED"]
+            }
+          }
+        }
+      },
+      "verdict": {
+        "type": "string",
+        "enum": ["PROCEED", "PROCEED_WITH_VERIFICATIONS", "REWORK", "DO_NOT_MODEL"]
+      },
+      "portfolio_recommendation": { "type": "string" }
+    }
+  }
+}
