@@ -6,11 +6,13 @@
   "workspaces": [
     "packages/canonical-model",
     "packages/adapter-sdk",
+    "packages/adapters/sap-fi",
     "harness",
     "apps/console"
   ],
   "scripts": {
     "test": "node --import tsx --test harness/test/chain.e2e.test.ts",
+    "test:sap": "node --import tsx --test packages/adapters/sap-fi/test/sap-fi.test.ts",
     "test:console": "npm run build:harness && npm run build:bundle && node --import tsx --test apps/console/test/handlers.test.ts",
     "demo": "node --import tsx harness/src/demo.ts",
     "build:harness": "tsc -p harness/tsconfig.build.json",

@@ -53,6 +53,15 @@ export const TrialBalanceLine = withProvenance({
 });
 export type TrialBalanceLine = z.infer<typeof TrialBalanceLine>;
 
+export const CostCenter = withProvenance({
+  cost_center_id: z.string(),
+  ledger_id: z.string().optional(),
+  name: z.string(),
+  responsible: z.string().optional(),
+  active: z.boolean().default(true),
+});
+export type CostCenter = z.infer<typeof CostCenter>;
+
 export const BudgetVersion = withProvenance({
   budget_version_id: z.string(),
   ledger_id: z.string(),
@@ -90,6 +99,7 @@ export const CFDM_ENTITY_KINDS = [
   "Account",
   "JournalEntry",
   "TrialBalanceLine",
+  "CostCenter",
   "BudgetVersion",
   "CloseTask",
   "ReconciliationItem",

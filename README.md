@@ -38,20 +38,27 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 |---|---|
 | [@fw/canonical-model](packages/canonical-model) | CFDM v0.1 entities with mandatory provenance |
 | [@fw/adapter-sdk](packages/adapter-sdk) | adapter contract + certification skeleton |
+| [@fw/adapter-sap-fi](packages/adapters/sap-fi) | **Phase 1** — SAP FI/CO read-only adapter (GL, cost centers, TB, journals) → CFDM, certified |
 | [@fw/harness](harness) | provider gateway, skill registry/runner, artifact store |
 | [skills/](skills) | CFO chain ported from finance-gstack (office-hours → strategic-review → forensic-audit) |
+| [apps/console](apps/console) | live Office Hours web console (local + Vercel) that runs the chain in a browser |
 
 **Phase 0 exit gate (met):** the CFO chain runs end-to-end through the harness against two different LLM providers, producing schema-valid, verdict-bearing artifacts.
 
 ```bash
-npm install      # workspaces (Node 20+)
-npm test         # exit gate — CFO chain across two providers, sequencing, fallback, schema
-npm run demo     # watch the chain run on a scripted provider
+npm install          # workspaces (Node 20+)
+npm test             # harness gate — CFO chain across two providers, sequencing, fallback, schema
+npm run test:sap     # SAP FI adapter gate — CFDM mapping, provenance, certification, paging, incremental
+npm run test:console # serverless console handlers
+npm run demo         # watch the chain run on a scripted provider
+npm run console      # local Office Hours console at http://localhost:4173
 ```
 
 > First-time `npm install` may trip a dependency's lifecycle script in a sandboxed shell; rerun, or use `npm install --ignore-scripts` (the toolchain needs no install scripts).
 
-Next: SAP FI adapter (read-only) and the CFO + FP&A workbenches on real data — Phase 1.
+**Deploy the console** (shareable link): connect this repo in Vercel — `vercel.json` configures the build (no settings needed) — or run `vercel --prod` from the repo after `vercel login`.
+
+Next (Phase 1 cont.): the CFO + FP&A workbenches rendering the SAP FI data with drill-to-source.
 
 ## Design lineage
 
