@@ -18,6 +18,7 @@
     "build:harness": "tsc -p harness/tsconfig.build.json",
     "build:bundle": "node scripts/build-skills-bundle.mjs",
     "vercel:build": "npm run build:harness && npm run build:bundle",
+    "vercel:check": "npm run vercel:build && node scripts/check-vercel-build.mjs",
     "console": "npm run build:harness && node --import tsx apps/console/server.ts",
     "typecheck": "tsc -p harness/tsconfig.json --noEmit"
   },
