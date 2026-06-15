@@ -86,14 +86,14 @@ test("journal items are grouped into balanced CFDM entries traced to the SAP doc
 test("trial-balance lines validate as CFDM", async () => {
   const { records } = await collect("TrialBalanceLine");
   const lines = records.map((r) => TrialBalanceLine.parse(r));
-  assert.equal(lines.length, 4);
+  assert.equal(lines.length, 8); // two periods x four accounts
   assert.ok(lines.every((l) => /^\d{4}-\d{2}$/.test(l.period)));
 });
 
 test("incremental extraction respects the changed-since cursor", async () => {
   const full = await collect("TrialBalanceLine");
   const incremental = await collect("TrialBalanceLine", { since: "2026-06-01T00:00:00Z" });
-  assert.equal(full.records.length, 4);
+  assert.equal(full.records.length, 8);
   assert.equal(incremental.records.length, 2); // only the two June-dated rows
 });
 

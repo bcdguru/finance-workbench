@@ -5,3 +5,4 @@ dist/
 *.local
 .vercel/
 apps/console/skills.bundle.json
+apps/web/public/cfdm.json

@@ -1,0 +1,66 @@
+:root {
+  --fw-navy: #0E2841;
+  --fw-accent: #156082;
+}
+
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: "IBM Plex Sans", system-ui, sans-serif; background: #f4f4f4; color: #161616; }
+
+.fw-app { display: flex; flex-direction: column; height: 100vh; }
+
+/* Header — platform standard: #0E2841 bar, #156082 mark */
+.fw-header {
+  height: 48px; flex: 0 0 48px; background: var(--fw-navy); color: #fff;
+  display: flex; align-items: center; gap: 12px; padding: 0 16px;
+}
+.fw-header .mark {
+  width: 26px; height: 26px; border-radius: 4px; background: var(--fw-accent);
+  display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;
+}
+.fw-header .title { font-size: 14px; font-weight: 600; }
+.fw-header .crumb { font-size: 13px; color: #9fb6cb; }
+.fw-header .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 12px; color: #9fb6cb; }
+.fw-header .oh { background: var(--fw-accent); color: #fff; border: 0; height: 32px; padding: 0 14px; font: inherit; font-size: 12px; cursor: pointer; }
+.fw-header .oh:hover { background: #0f4d68; }
+
+.fw-body { flex: 1; display: flex; min-height: 0; }
+
+/* Persona nav rail */
+.fw-nav { width: 200px; flex: 0 0 200px; background: #fff; border-right: 1px solid #e0e0e0; padding: 8px 0; overflow: auto; }
+.fw-nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #6f6f6f; padding: 12px 16px 4px; }
+.fw-nav .item { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 14px; color: #161616; cursor: default; border-left: 3px solid transparent; }
+.fw-nav .item.active { background: #e5eef3; border-left-color: var(--fw-accent); font-weight: 500; }
+.fw-nav .item.disabled { color: #a8a8a8; }
+.fw-nav .item .phase { margin-left: auto; font-size: 10px; color: #a8a8a8; }
+
+.fw-main { flex: 1; overflow: auto; padding: 24px 28px; min-width: 0; }
+.fw-main h1 { font-size: 22px; font-weight: 600; margin: 0 0 2px; }
+.fw-main .sub { color: #6f6f6f; font-size: 13px; margin-bottom: 20px; }
+.fw-main h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #6f6f6f; margin: 28px 0 10px; }
+
+.fw-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.fw-kpi .cds--tile { min-height: 92px; }
+.fw-kpi .label { font-size: 12px; color: #6f6f6f; }
+.fw-kpi .value { font-size: 24px; font-weight: 600; margin-top: 6px; }
+.fw-kpi .note { font-size: 12px; color: #6f6f6f; margin-top: 2px; }
+
+.num { font-variant-numeric: tabular-nums; text-align: right; }
+.pos { color: #0e6027; }
+.neg { color: #a2191f; }
+
+.drillable { cursor: pointer; }
+.drillable:hover { background: #e5eef3; }
+
+.fw-loading { padding: 40px; color: #6f6f6f; }
+
+/* Drill-to-source panel */
+.fw-drill { width: 360px; flex: 0 0 360px; background: #fff; border-left: 1px solid #e0e0e0; overflow: auto; }
+.fw-drill .head { background: var(--fw-navy); color: #fff; padding: 14px 16px; display: flex; align-items: flex-start; gap: 8px; }
+.fw-drill .head .t { font-size: 14px; font-weight: 600; }
+.fw-drill .head .s { font-size: 12px; color: #9fb6cb; margin-top: 2px; }
+.fw-drill .head .x { margin-left: auto; background: none; border: 0; color: #9fb6cb; font-size: 18px; cursor: pointer; line-height: 1; }
+.fw-drill .body { padding: 16px; }
+.fw-drill .prov-row { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.fw-drill .prov-row .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6f6f6f; }
+.fw-drill .prov-row .v { font-family: "IBM Plex Mono", monospace; font-size: 13px; margin-top: 3px; word-break: break-all; }
+.fw-drill .trace { font-size: 12px; color: #6f6f6f; margin: 14px 0; line-height: 1.5; }

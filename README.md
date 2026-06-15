@@ -42,6 +42,7 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 | [@fw/harness](harness) | provider gateway, skill registry/runner, artifact store |
 | [skills/](skills) | CFO chain ported from finance-gstack (office-hours → strategic-review → forensic-audit) |
 | [apps/console](apps/console) | live Office Hours web console (local + Vercel) that runs the chain in a browser |
+| [@fw/web](apps/web) | **Phase 1** — FP&A workbench (Vite + React + Carbon) rendering the SAP FI CFDM with period-over-period flux review and drill-to-source provenance |
 
 **Phase 0 exit gate (met):** the CFO chain runs end-to-end through the harness against two different LLM providers, producing schema-valid, verdict-bearing artifacts.
 
@@ -50,8 +51,10 @@ npm install          # workspaces (Node 20+)
 npm test             # harness gate — CFO chain across two providers, sequencing, fallback, schema
 npm run test:sap     # SAP FI adapter gate — CFDM mapping, provenance, certification, paging, incremental
 npm run test:console # serverless console handlers
+npm run test:web     # FP&A workbench render (SSR smoke)
 npm run demo         # watch the chain run on a scripted provider
 npm run console      # local Office Hours console at http://localhost:4173
+npm run web          # local FP&A workbench at http://localhost:4174 (renders SAP FI CFDM)
 ```
 
 > First-time `npm install` may trip a dependency's lifecycle script in a sandboxed shell; rerun, or use `npm install --ignore-scripts` (the toolchain needs no install scripts).

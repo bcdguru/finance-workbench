@@ -18,6 +18,12 @@ export const SAP_FI_FIXTURE: Record<string, any[]> = {
   ],
 
   A_TrialBalance: [
+    // Prior period (2026-04) — enables period-over-period flux review in FP&A.
+    { Ledger: "0L", GLAccount: "0000100000", FiscalYear: 2026, FiscalPeriod: 4, DebitAmountInGlobalCrcy: 1500000, CreditAmountInGlobalCrcy: 0, BalanceAmountInGlobalCrcy: 1500000, LastChangeDateTime: "2026-04-30T00:00:00Z" },
+    { Ledger: "0L", GLAccount: "0000211000", FiscalYear: 2026, FiscalPeriod: 4, DebitAmountInGlobalCrcy: 0, CreditAmountInGlobalCrcy: 700000, BalanceAmountInGlobalCrcy: -700000, LastChangeDateTime: "2026-04-30T00:00:00Z" },
+    { Ledger: "0L", GLAccount: "0000400000", FiscalYear: 2026, FiscalPeriod: 4, DebitAmountInGlobalCrcy: 0, CreditAmountInGlobalCrcy: 1900000, BalanceAmountInGlobalCrcy: -1900000, LastChangeDateTime: "2026-04-30T00:00:00Z" },
+    { Ledger: "0L", GLAccount: "0000500000", FiscalYear: 2026, FiscalPeriod: 4, DebitAmountInGlobalCrcy: 300000, CreditAmountInGlobalCrcy: 0, BalanceAmountInGlobalCrcy: 300000, LastChangeDateTime: "2026-04-30T00:00:00Z" },
+    // Current period (2026-05).
     { Ledger: "0L", GLAccount: "0000100000", FiscalYear: 2026, FiscalPeriod: 5, DebitAmountInGlobalCrcy: 1820000, CreditAmountInGlobalCrcy: 0, BalanceAmountInGlobalCrcy: 1820000, LastChangeDateTime: "2026-05-31T00:00:00Z" },
     { Ledger: "0L", GLAccount: "0000211000", FiscalYear: 2026, FiscalPeriod: 5, DebitAmountInGlobalCrcy: 0, CreditAmountInGlobalCrcy: 640000, BalanceAmountInGlobalCrcy: -640000, LastChangeDateTime: "2026-05-31T00:00:00Z" },
     { Ledger: "0L", GLAccount: "0000400000", FiscalYear: 2026, FiscalPeriod: 5, DebitAmountInGlobalCrcy: 0, CreditAmountInGlobalCrcy: 2350000, BalanceAmountInGlobalCrcy: -2350000, LastChangeDateTime: "2026-06-30T00:00:00Z" },

@@ -8,7 +8,8 @@
     "packages/adapter-sdk",
     "packages/adapters/sap-fi",
     "harness",
-    "apps/console"
+    "apps/console",
+    "apps/web"
   ],
   "scripts": {
     "test": "node --import tsx --test harness/test/chain.e2e.test.ts",
@@ -20,6 +21,9 @@
     "vercel:build": "npm run build:harness && npm run build:bundle",
     "vercel:check": "npm run vercel:build && node scripts/check-vercel-build.mjs",
     "console": "npm run build:harness && node --import tsx apps/console/server.ts",
+    "web": "npm --prefix apps/web run dev",
+    "build:web": "npm --prefix apps/web run build",
+    "test:web": "npm --prefix apps/web run test",
     "typecheck": "tsc -p harness/tsconfig.json --noEmit"
   },
   "devDependencies": {
