@@ -11,12 +11,17 @@
   ],
   "scripts": {
     "test": "node --import tsx --test harness/test/chain.e2e.test.ts",
+    "test:console": "npm run build:harness && npm run build:bundle && node --import tsx --test apps/console/test/handlers.test.ts",
     "demo": "node --import tsx harness/src/demo.ts",
-    "console": "node --import tsx apps/console/server.ts",
+    "build:harness": "tsc -p harness/tsconfig.build.json",
+    "build:bundle": "node scripts/build-skills-bundle.mjs",
+    "vercel:build": "npm run build:harness && npm run build:bundle",
+    "console": "npm run build:harness && node --import tsx apps/console/server.ts",
     "typecheck": "tsc -p harness/tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.7.0",
+    "@vercel/node": "^5.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   }
