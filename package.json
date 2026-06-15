@@ -6,11 +6,13 @@
   "workspaces": [
     "packages/canonical-model",
     "packages/adapter-sdk",
-    "harness"
+    "harness",
+    "apps/console"
   ],
   "scripts": {
     "test": "node --import tsx --test harness/test/chain.e2e.test.ts",
     "demo": "node --import tsx harness/src/demo.ts",
+    "console": "node --import tsx apps/console/server.ts",
     "typecheck": "tsc -p harness/tsconfig.json --noEmit"
   },
   "devDependencies": {

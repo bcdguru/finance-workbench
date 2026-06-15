@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finance Workbench — Office Hours console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0E2841;
+    --accent: #156082;
+    --bg: #f4f4f4;
+    --ink: #161616;
+    --muted: #6f6f6f;
+    --line: #e0e0e0;
+    --card: #ffffff;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.45; }
+  header.top { background: var(--navy); color: #fff; padding: 16px 28px; display: flex; align-items: center; gap: 14px; }
+  header.top .mark { width: 30px; height: 30px; border-radius: 6px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; }
+  header.top h1 { font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  header.top .sub { font-size: 12px; color: #9fb6cb; margin-top: 1px; }
+  header.top .right { margin-left: auto; font-size: 11px; color: #9fb6cb; font-family: var(--mono); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  .controls { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+  .field input, .field select { font-family: var(--sans); font-size: 14px; padding: 9px 11px; border: 1px solid #c6c6c6; border-radius: 4px; background: #fff; min-width: 240px; }
+  .field.grow { flex: 1; }
+  .field.grow input { width: 100%; min-width: 0; }
+  button.run { background: var(--accent); color: #fff; border: 0; border-radius: 4px; font-family: var(--sans); font-size: 14px; font-weight: 500; padding: 10px 22px; cursor: pointer; height: 39px; }
+  button.run:hover { background: #0f4d68; }
+  button.run:disabled { background: #a0b4c0; cursor: progress; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0 26px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 13px 15px; }
+  .kpi .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .kpi .value { font-size: 20px; font-weight: 600; margin-top: 3px; }
+  .kpi .value.small { font-size: 14px; font-weight: 500; }
+
+  section h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 30px 0 12px; font-weight: 600; }
+
+  .chain { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 22px; display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+  .node { border-radius: 6px; padding: 11px 13px; min-width: 168px; flex: 1 1 168px; display: flex; flex-direction: column; gap: 4px; min-height: 78px; }
+  .node .nlabel { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+  .node .nname { font-family: var(--mono); font-size: 12.5px; font-weight: 500; word-break: break-word; }
+  .skill-node { background: #eef4f7; border: 1px solid #cfe0e8; }
+  .skill-node .nname { color: var(--accent); }
+  .artifact-node { background: #f7f7f5; border: 1px dashed #cfcfca; cursor: default; }
+  .artifact-node.filled { background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent); cursor: pointer; }
+  .artifact-node .akind { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .arrow { display: flex; align-items: center; justify-content: center; color: #b0b0b0; font-size: 18px; flex: 0 0 16px; }
+
+  .chip { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 4px; align-self: flex-start; margin-top: 2px; }
+  .chip.wait { background: #eee; color: #777; border: 1px solid #ddd; }
+  .v-green  { background: #defbe6; color: #0e6027; border: 1px solid #a7f0ba; }
+  .v-amber  { background: #fdf6dd; color: #8a6500; border: 1px solid #f1e2a6; }
+  .v-orange { background: #ffe9d6; color: #b25700; border: 1px solid #ffc9a0; }
+  .v-red    { background: #ffd7d9; color: #a2191f; border: 1px solid #ffb3b8; }
+  .v-blue   { background: #e0eafc; color: #0f62fe; border: 1px solid #b8cef9; }
+  .v-gray   { background: #eaeaea; color: #525252; border: 1px solid #d4d4d4; }
+
+  .results { display: flex; flex-direction: column; gap: 12px; }
+  .result { background: var(--card); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .result .rhead { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+  .result .rskill { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--accent); }
+  .result .rkind { font-size: 12px; color: var(--muted); }
+  .result .rmeta { margin-left: auto; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .result pre { margin: 0; padding: 14px 16px; background: #fafafa; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; line-height: 1.6; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+  .result pre[hidden] { display: none; }
+
+  .ledger { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  .ledger th, .ledger td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  .ledger th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: #fafafa; }
+  .ledger td { font-family: var(--mono); }
+  .ledger tr:last-child td { border-bottom: 0; }
+
+  .empty { color: var(--muted); font-size: 13px; padding: 8px 2px; }
+  .err { background: #fff1f1; border: 1px solid #ffb3b8; color: #a2191f; border-radius: 6px; padding: 12px 14px; font-size: 13px; }
+  .legend { font-size: 12px; color: var(--muted); margin-top: 10px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="mark">FW</div>
+  <div>
+    <h1>Finance Workbench — Office Hours console</h1>
+    <div class="sub">Phase 0 · runs the CFO chain through the @fw/harness · LLM choice is configuration</div>
+  </div>
+  <div class="right" id="env">scripted</div>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <div class="field grow">
+      <label for="deal">Deal under consideration</label>
+      <input id="deal" type="text" value="Midwest distribution center buildout" placeholder="e.g. ERP re-platform, plant expansion, market entry…" />
+    </div>
+    <div class="field">
+      <label for="model">Model (route)</label>
+      <select id="model"></select>
+    </div>
+    <button class="run" id="run">Run chain</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Phase</div><div class="value">0 · foundation</div></div>
+    <div class="kpi"><div class="label">Skills in chain</div><div class="value" id="kpi-skills">—</div></div>
+    <div class="kpi"><div class="label">Active model</div><div class="value small" id="kpi-model">—</div></div>
+    <div class="kpi"><div class="label">Artifacts produced</div><div class="value" id="kpi-artifacts">0</div></div>
+  </div>
+
+  <section>
+    <h2>Workflow chain</h2>
+    <div class="chain" id="chain"></div>
+    <div class="legend">Each skill is gated by the upstream artifact — the runner refuses to start a skill whose upstream is missing. Switch the model and re-run to see the same chain produce different verdicts: the LLM is a route, not code.</div>
+  </section>
+
+  <section>
+    <h2>Artifacts</h2>
+    <div id="results" class="results"><div class="empty">Run the chain to produce artifacts.</div></div>
+  </section>
+
+  <section>
+    <h2>Cost ledger (metered model calls)</h2>
+    <div id="ledger"><div class="empty">No calls yet.</div></div>
+  </section>
+</div>
+
+<script>
+const VERDICT_CLASS = {
+  GREEN: "v-green", PROCEED: "v-green", HOLDS: "v-green", READY_TO_REVIEW: "v-blue",
+  YELLOW: "v-amber", PROCEED_WITH_VERIFICATIONS: "v-amber", HOLDS_WITH_CONDITIONS: "v-amber",
+  ORANGE: "v-orange", REWORK: "v-orange", WEAK: "v-orange",
+  RED: "v-red", DO_NOT_MODEL: "v-red", REJECTED: "v-red",
+  NOT_READY: "v-gray",
+};
+const vclass = (v) => VERDICT_CLASS[v] || "v-gray";
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+let SKILLS = [];
+
+async function init() {
+  const [skillsRes, modelsRes] = await Promise.all([
+    fetch("/api/skills").then((r) => r.json()),
+    fetch("/api/models").then((r) => r.json()),
+  ]);
+  SKILLS = skillsRes.skills;
+  document.getElementById("kpi-skills").textContent = SKILLS.length;
+
+  const sel = document.getElementById("model");
+  sel.innerHTML = modelsRes.models.map((m) => `<option value="${m.id}">${esc(m.label)}</option>`).join("");
+  const hasLive = modelsRes.models.some((m) => m.kind === "live");
+  document.getElementById("env").textContent = hasLive ? "live providers available" : "scripted providers";
+
+  renderChain(null);
+}
+
+function renderChain(artifacts) {
+  const chain = document.getElementById("chain");
+  const nodes = [];
+  SKILLS.forEach((s, i) => {
+    nodes.push(`<div class="node skill-node"><div class="nlabel">Skill</div><div class="nname">/${esc(s.name)}</div></div>`);
+    const art = artifacts ? artifacts[i] : null;
+    if (art) {
+      nodes.push(`<div class="node artifact-node filled" data-idx="${i}">
+        <div class="nlabel">Artifact</div>
+        <div class="akind">${esc(art.artifactKind)}</div>
+        <span class="chip ${vclass(art.verdict)}">${esc(art.verdict)}</span>
+      </div>`);
+    } else {
+      nodes.push(`<div class="node artifact-node">
+        <div class="nlabel">Artifact</div>
+        <div class="akind">${esc(s.artifactKind)}</div>
+        <span class="chip wait">pending</span>
+      </div>`);
+    }
+    if (i < SKILLS.length - 1) nodes.push(`<div class="arrow">→</div>`);
+  });
+  chain.innerHTML = nodes.join("");
+  chain.querySelectorAll(".artifact-node.filled").forEach((el) => {
+    el.addEventListener("click", () => {
+      const card = document.querySelector(`.result[data-idx="${el.dataset.idx}"]`);
+      if (card) { card.scrollIntoView({ behavior: "smooth", block: "center" }); card.querySelector("pre").hidden = false; }
+    });
+  });
+}
+
+function renderResults(artifacts) {
+  const root = document.getElementById("results");
+  root.innerHTML = artifacts.map((a, i) => `
+    <div class="result" data-idx="${i}">
+      <div class="rhead">
+        <span class="rskill">/${esc(a.skill)}</span>
+        <span class="rkind">${esc(a.artifactKind)}</span>
+        <span class="chip ${vclass(a.verdict)}">${esc(a.verdict)}</span>
+        <span class="rmeta">${esc(a.modelId)} · ${a.usage.inputTokens + a.usage.outputTokens} tok · ${esc(a.id)}</span>
+      </div>
+      <pre hidden>${esc(JSON.stringify(a.body, null, 2))}</pre>
+    </div>`).join("");
+  root.querySelectorAll(".rhead").forEach((h) => h.addEventListener("click", () => {
+    const pre = h.parentElement.querySelector("pre"); pre.hidden = !pre.hidden;
+  }));
+}
+
+function renderLedger(ledger) {
+  const root = document.getElementById("ledger");
+  if (!ledger.length) { root.innerHTML = '<div class="empty">No calls yet.</div>'; return; }
+  root.innerHTML = `<table class="ledger">
+    <thead><tr><th>Skill</th><th>Provider</th><th>Model</th><th>In</th><th>Out</th></tr></thead>
+    <tbody>${ledger.map((l) => `<tr><td>${esc(l.skill)}</td><td>${esc(l.provider)}</td><td>${esc(l.model)}</td><td>${l.usage.inputTokens}</td><td>${l.usage.outputTokens}</td></tr>`).join("")}</tbody>
+  </table>`;
+}
+
+async function run() {
+  const btn = document.getElementById("run");
+  const deal = document.getElementById("deal").value;
+  const modelId = document.getElementById("model").value;
+  const modelLabel = document.getElementById("model").selectedOptions[0].textContent;
+  btn.disabled = true; btn.textContent = "Running…";
+  document.getElementById("results").innerHTML = '<div class="empty">Running the chain…</div>';
+  try {
+    const res = await fetch("/api/run", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ deal, modelId }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "run failed");
+    document.getElementById("kpi-model").textContent = modelLabel;
+    document.getElementById("kpi-artifacts").textContent = data.artifacts.length;
+    renderChain(data.artifacts);
+    renderResults(data.artifacts);
+    renderLedger(data.ledger);
+  } catch (e) {
+    document.getElementById("results").innerHTML = `<div class="err">${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Run chain";
+  }
+}
+
+document.getElementById("run").addEventListener("click", run);
+init();
+</script>
+</body>
+</html>
