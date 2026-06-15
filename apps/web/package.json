@@ -8,7 +8,7 @@
     "dev": "npm run gen:cfdm && vite",
     "build": "npm run gen:cfdm && vite build",
     "preview": "vite preview --port 4174",
-    "test": "node --import tsx --test test/render.test.tsx",
+    "test": "node --import tsx --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

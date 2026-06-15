@@ -47,14 +47,21 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 **Phase 0 exit gate (met):** the CFO chain runs end-to-end through the harness against two different LLM providers, producing schema-valid, verdict-bearing artifacts.
 
 ```bash
-npm install          # workspaces (Node 20+)
-npm test             # harness gate — CFO chain across two providers, sequencing, fallback, schema
-npm run test:sap     # SAP FI adapter gate — CFDM mapping, provenance, certification, paging, incremental
-npm run test:console # serverless console handlers
-npm run test:web     # FP&A workbench render (SSR smoke)
-npm run demo         # watch the chain run on a scripted provider
-npm run console      # local Office Hours console at http://localhost:4173
-npm run web          # local FP&A workbench at http://localhost:4174 (renders SAP FI CFDM)
+npm install            # workspaces (Node 20+)
+npm run test:all       # every suite below — 72 tests across all modules
+
+# or per module:
+npm test               # harness — gateway routing/fallback/metering, JSON-schema validator,
+                       #   artifact store, registry, drivers, runner, + CFO chain e2e (27)
+npm run test:model     # CFDM entities — provenance requiredness, enum/type validation (6)
+npm run test:adapter-sdk # certification suite passes/fails conformant + broken adapters (5)
+npm run test:sap       # SAP FI — OData client (mock), mappers, certification, paging, incremental (17)
+npm run test:console   # console-core + serverless handlers (9)
+npm run test:web       # FP&A flux/KPI model + workbench/provenance render (8)
+
+npm run demo           # watch the chain run on a scripted provider
+npm run console        # local Office Hours console at http://localhost:4173
+npm run web            # local FP&A workbench at http://localhost:4174 (renders SAP FI CFDM)
 ```
 
 > First-time `npm install` may trip a dependency's lifecycle script in a sandboxed shell; rerun, or use `npm install --ignore-scripts` (the toolchain needs no install scripts).
