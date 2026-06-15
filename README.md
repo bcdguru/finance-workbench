@@ -42,13 +42,13 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 | [@fw/harness](harness) | provider gateway, skill registry/runner, artifact store |
 | [skills/](skills) | CFO chain ported from finance-gstack (office-hours → strategic-review → forensic-audit) |
 | [apps/console](apps/console) | live Office Hours web console (local + Vercel) that runs the chain in a browser |
-| [@fw/web](apps/web) | **Phase 1** — FP&A workbench (Vite + React + Carbon) rendering the SAP FI CFDM with period-over-period flux review and drill-to-source provenance |
+| [@fw/web](apps/web) | **Phase 1** — persona workbenches (Vite + React + Carbon): **CFO** decision pipeline over the harness chain artifacts (verdict chips, per-deal timeline, harsh-verdict-rate health metric) and **FP&A** over SAP FI CFDM (flux review + drill-to-source) |
 
 **Phase 0 exit gate (met):** the CFO chain runs end-to-end through the harness against two different LLM providers, producing schema-valid, verdict-bearing artifacts.
 
 ```bash
 npm install            # workspaces (Node 20+)
-npm run test:all       # every suite below — 72 tests across all modules
+npm run test:all       # every suite below — 80 tests across all modules
 
 # or per module:
 npm test               # harness — gateway routing/fallback/metering, JSON-schema validator,
@@ -57,7 +57,7 @@ npm run test:model     # CFDM entities — provenance requiredness, enum/type va
 npm run test:adapter-sdk # certification suite passes/fails conformant + broken adapters (5)
 npm run test:sap       # SAP FI — OData client (mock), mappers, certification, paging, incremental (17)
 npm run test:console   # console-core + serverless handlers (9)
-npm run test:web       # FP&A flux/KPI model + workbench/provenance render (8)
+npm run test:web       # CFO pipeline model + FP&A flux/KPI model + workbench renders (16)
 
 npm run demo           # watch the chain run on a scripted provider
 npm run console        # local Office Hours console at http://localhost:4173

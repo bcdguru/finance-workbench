@@ -6,3 +6,4 @@ dist/
 .vercel/
 apps/console/skills.bundle.json
 apps/web/public/cfdm.json
+apps/web/public/cfo-deals.json

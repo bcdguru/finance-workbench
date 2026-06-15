@@ -31,6 +31,8 @@ body { font-family: "IBM Plex Sans", system-ui, sans-serif; background: #f4f4f4;
 .fw-nav .item { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 14px; color: #161616; cursor: default; border-left: 3px solid transparent; }
 .fw-nav .item.active { background: #e5eef3; border-left-color: var(--fw-accent); font-weight: 500; }
 .fw-nav .item.disabled { color: #a8a8a8; }
+.fw-nav .item.clickable { cursor: pointer; }
+.fw-nav .item.clickable:hover { background: #f0f4f6; }
 .fw-nav .item .phase { margin-left: auto; font-size: 10px; color: #a8a8a8; }
 
 .fw-main { flex: 1; overflow: auto; padding: 24px 28px; min-width: 0; }
@@ -64,3 +66,14 @@ body { font-family: "IBM Plex Sans", system-ui, sans-serif; background: #f4f4f4;
 .fw-drill .prov-row .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6f6f6f; }
 .fw-drill .prov-row .v { font-family: "IBM Plex Mono", monospace; font-size: 13px; margin-top: 3px; word-break: break-all; }
 .fw-drill .trace { font-size: 12px; color: #6f6f6f; margin: 14px 0; line-height: 1.5; }
+
+/* CFO artifact timeline */
+.muted { color: #a8a8a8; }
+.fw-foot { font-size: 12px; color: #6f6f6f; margin-top: 16px; max-width: 720px; }
+.fw-drill .art { border-left: 2px solid var(--fw-accent); padding: 6px 0 14px 12px; margin-left: 4px; }
+.fw-drill .art-head { display: flex; align-items: center; gap: 8px; }
+.fw-drill .art-skill { font-size: 13px; font-weight: 500; }
+.fw-drill .art-meta { font-size: 11px; color: #8d8d8d; font-family: "IBM Plex Mono", monospace; margin-top: 2px; }
+.fw-drill .art-line { font-size: 13px; color: #393939; margin: 8px 0 6px; }
+.fw-drill details summary { font-size: 12px; color: var(--fw-accent); cursor: pointer; }
+.fw-drill pre { background: #f4f4f4; border: 1px solid #e0e0e0; padding: 10px; font-family: "IBM Plex Mono", monospace; font-size: 11px; line-height: 1.5; overflow-x: auto; margin: 8px 0 0; }

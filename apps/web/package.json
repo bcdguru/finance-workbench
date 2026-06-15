@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "gen:cfdm": "node --import tsx scripts/gen-cfdm.ts",
-    "dev": "npm run gen:cfdm && vite",
-    "build": "npm run gen:cfdm && vite build",
+    "gen:cfo": "node --import tsx scripts/gen-cfo-deals.ts",
+    "gen": "npm run gen:cfdm && npm run gen:cfo",
+    "dev": "npm run gen && vite",
+    "build": "npm run gen && vite build",
     "preview": "vite preview --port 4174",
     "test": "node --import tsx --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\"",
     "typecheck": "tsc --noEmit"
