@@ -3,12 +3,13 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { SkillRegistry, liveProvidersFromEnv } from "@fw/harness";
+import { SkillRegistry, liveProvidersFromEnv, type LlmMessage } from "@fw/harness";
 import {
   SCRIPTED_MODELS,
   scriptedProviderFor,
   runChain,
   skillSummaries,
+  sessionTurn,
   type ModelOption,
 } from "./lib/console-core.js";
 
@@ -44,6 +45,24 @@ const server = createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/") return send(res, 200, "text/html; charset=utf-8", indexHtml);
   if (req.method === "GET" && url.pathname === "/api/skills") return json(res, 200, { skills: skillSummaries(registry) });
   if (req.method === "GET" && url.pathname === "/api/models") return json(res, 200, { models: modelOptions() });
+
+  if (req.method === "POST" && url.pathname === "/api/session") {
+    let raw = "";
+    for await (const chunk of req) raw += chunk;
+    let body: any;
+    try {
+      body = JSON.parse(raw || "{}");
+    } catch {
+      return json(res, 400, { error: "invalid JSON body" });
+    }
+    const deal = (body.deal as string)?.trim() || "a strategic investment";
+    const messages: LlmMessage[] = Array.isArray(body.messages) ? body.messages : [];
+    try {
+      return json(res, 200, await sessionTurn(registry, deal, messages));
+    } catch (e) {
+      return json(res, 500, { error: (e as Error).message });
+    }
+  }
 
   if (req.method === "POST" && url.pathname === "/api/run") {
     let raw = "";

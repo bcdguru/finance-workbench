@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { SkillRegistry } from "@fw/harness";
-import { chainOrder, SCRIPTED_MODELS, scriptFor, scriptedProviderFor, runChain, skillSummaries } from "../lib/console-core.js";
+import { SkillRegistry, type LlmMessage } from "@fw/harness";
+import { chainOrder, SCRIPTED_MODELS, scriptFor, scriptedProviderFor, runChain, skillSummaries, sessionTurn } from "../lib/console-core.js";
 
 const skillsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "skills");
 const registry = SkillRegistry.loadFromDir(skillsDir);
@@ -41,4 +41,23 @@ test("skillSummaries surface verdict vocabularies for the UI", () => {
   const summaries = skillSummaries(registry);
   assert.equal(summaries.length, 3);
   assert.ok(summaries[1]!.verdictVocabulary.includes("ORANGE"));
+});
+
+test("an interactive office-hours session asks questions, then completes with a thesis", async () => {
+  let messages: LlmMessage[] = [{ role: "user", content: "We're weighing a Midwest distribution center." }];
+  let turn = await sessionTurn(registry, "Midwest DC", messages);
+  assert.equal(turn.status, "active");
+  assert.ok(turn.question && turn.question.length > 0);
+
+  // Drive the conversation (stateless — carry the history each turn) until done.
+  let guard = 0;
+  while (turn.status === "active" && guard++ < 10) {
+    messages = [...turn.messages, { role: "user", content: "Here is my answer." }];
+    turn = await sessionTurn(registry, "Midwest DC", messages);
+  }
+
+  assert.equal(turn.status, "complete");
+  assert.equal(turn.artifact?.artifactKind, "strategic-thesis");
+  assert.equal(turn.artifact?.verdict, "READY_TO_REVIEW");
+  assert.equal(turn.artifact?.body.title, "Midwest DC");
 });

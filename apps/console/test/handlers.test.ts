@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import skills from "../../../api/skills.ts";
 import models from "../../../api/models.ts";
 import run from "../../../api/run.ts";
+import session from "../../../api/session.ts";
 
 /**
  * Verifies the Vercel serverless handlers locally (the logic Vercel will run),
@@ -64,4 +65,24 @@ test("POST /api/run on the adversarial model returns harsher verdicts", async ()
     "ORANGE",
     "REWORK",
   ]);
+});
+
+test("POST /api/session advances a conversational turn and completes statelessly", async () => {
+  // First turn: one user message -> a question.
+  let res = mockRes();
+  await session({ body: { deal: "ERP re-platform", messages: [{ role: "user", content: "weighing an ERP re-platform" }] } } as any, res as any);
+  let data = res.body as any;
+  assert.equal(res.statusCode, 200);
+  assert.equal(data.status, "active");
+  assert.ok(data.question);
+
+  // Drive to completion, carrying the history back each turn (stateless).
+  let guard = 0;
+  while (data.status === "active" && guard++ < 10) {
+    res = mockRes();
+    await session({ body: { deal: "ERP re-platform", messages: [...data.messages, { role: "user", content: "answer" }] } } as any, res as any);
+    data = res.body as any;
+  }
+  assert.equal(data.status, "complete");
+  assert.equal(data.artifact.verdict, "READY_TO_REVIEW");
 });

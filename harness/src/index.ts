@@ -6,6 +6,7 @@ export * from "./registry/types.js";
 export * from "./registry/registry.js";
 export * from "./artifacts/store.js";
 export * from "./runner/runner.js";
+export * from "./runner/session.js";
 
 import { SkillRegistry } from "./registry/registry.js";
 import { ProviderGateway, type GatewayConfig } from "./gateway/gateway.js";

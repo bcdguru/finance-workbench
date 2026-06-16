@@ -83,6 +83,17 @@
   .empty { color: var(--muted); font-size: 13px; padding: 8px 2px; }
   .err { background: #fff1f1; border: 1px solid #ffb3b8; color: #a2191f; border-radius: 6px; padding: 12px 14px; font-size: 13px; }
   .legend { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .oh-card { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+  .oh-convo { display: flex; flex-direction: column; gap: 10px; }
+  .oh-bubble { max-width: 78%; padding: 9px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+  .oh-bubble.assistant { background: #eef4f7; border: 1px solid #cfe0e8; align-self: flex-start; }
+  .oh-bubble.user { background: var(--accent); color: #fff; align-self: flex-end; }
+  .oh-bubble.thesis { background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--accent); align-self: stretch; max-width: 100%; }
+  .oh-bubble.thesis .chip { margin-bottom: 6px; }
+  .oh-bubble.thesis pre { margin: 8px 0 0; background: #fafafa; border: 1px solid var(--line); border-radius: 4px; padding: 10px; font-family: var(--mono); font-size: 12px; overflow-x: auto; }
+  .oh-input { display: flex; gap: 8px; margin-top: 12px; }
+  .oh-input input { flex: 1; font: inherit; font-size: 14px; padding: 9px 11px; border: 1px solid #c6c6c6; border-radius: 4px; }
+  .oh-actions { margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -114,6 +125,19 @@
     <div class="kpi"><div class="label">Active model</div><div class="value small" id="kpi-model">—</div></div>
     <div class="kpi"><div class="label">Artifacts produced</div><div class="value" id="kpi-artifacts">0</div></div>
   </div>
+
+  <section>
+    <h2>Interactive office hours — frame the bet, one question at a time</h2>
+    <div class="card oh-card">
+      <div id="oh-convo" class="oh-convo"><div class="empty">Enter a deal above and start office hours. The CFO will ask one forcing question at a time, then produce the Strategic Thesis.</div></div>
+      <div id="oh-input" class="oh-input" hidden>
+        <input id="oh-msg" type="text" placeholder="Type your answer…" />
+        <button class="run" id="oh-send">Send</button>
+      </div>
+      <div class="oh-actions"><button class="run" id="oh-start">Start office hours</button></div>
+    </div>
+    <div class="legend">Framing skills run conversationally (architecture FR-15); the chain above runs headless. The thesis produced here is the artifact the chain consumes.</div>
+  </section>
 
   <section>
     <h2>Workflow chain</h2>
@@ -242,6 +266,57 @@ async function run() {
     btn.disabled = false; btn.textContent = "Run chain";
   }
 }
+
+// --- Interactive office hours ---
+let ohMessages = [];
+const ohConvo = () => document.getElementById("oh-convo");
+function ohBubble(role, text, cls) {
+  const d = document.createElement("div");
+  d.className = `oh-bubble ${cls || role}`;
+  d.textContent = text;
+  ohConvo().appendChild(d);
+  d.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  return d;
+}
+async function ohTurn() {
+  const deal = document.getElementById("deal").value || "a strategic investment";
+  const res = await fetch("/api/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ deal, messages: ohMessages }) });
+  const data = await res.json();
+  if (!res.ok) { ohBubble("assistant", data.error || "session error", "assistant"); return; }
+  ohMessages = data.messages;
+  if (data.status === "complete") {
+    const a = data.artifact;
+    const b = ohBubble("assistant", "", "thesis");
+    b.innerHTML = `<span class="chip ${vclass(a.verdict)}">${esc(a.verdict)}</span><strong>Strategic Thesis — ${esc(a.body.title)}</strong><pre>${esc(JSON.stringify(a.body, null, 2))}</pre>`;
+    document.getElementById("oh-input").hidden = true;
+    document.getElementById("oh-start").hidden = false;
+    document.getElementById("oh-start").textContent = "Start again";
+  } else {
+    ohBubble("assistant", data.question);
+    document.getElementById("oh-input").hidden = false;
+    document.getElementById("oh-msg").focus();
+  }
+}
+async function ohStart() {
+  ohMessages = [];
+  ohConvo().innerHTML = "";
+  document.getElementById("oh-start").hidden = true;
+  ohMessages.push({ role: "user", content: `I'm weighing: ${document.getElementById("deal").value || "a strategic investment"}.` });
+  ohBubble("user", ohMessages[0].content);
+  await ohTurn();
+}
+async function ohSend() {
+  const input = document.getElementById("oh-msg");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  ohMessages.push({ role: "user", content: text });
+  ohBubble("user", text);
+  await ohTurn();
+}
+document.getElementById("oh-start").addEventListener("click", ohStart);
+document.getElementById("oh-send").addEventListener("click", ohSend);
+document.getElementById("oh-msg").addEventListener("keydown", (e) => { if (e.key === "Enter") ohSend(); });
 
 document.getElementById("run").addEventListener("click", run);
 init();

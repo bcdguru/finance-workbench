@@ -3,8 +3,11 @@ import {
   ArtifactStore,
   SkillRunner,
   ScriptedProvider,
+  TranscriptProvider,
+  runInteractiveTurn,
   type SkillRegistry,
   type LlmProvider,
+  type LlmMessage,
 } from "@fw/harness";
 
 /**
@@ -143,4 +146,37 @@ export function skillSummaries(registry: SkillRegistry) {
     const s = registry.get(name);
     return { name: s.name, description: s.description, mode: s.mode, upstream: s.upstream, artifactKind: s.artifactKind, verdictVocabulary: s.verdictVocabulary };
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* Interactive office hours (FR-15) — conversational, one question at  */
+/* a time, until the Strategic Thesis artifact is produced.            */
+/* ------------------------------------------------------------------ */
+
+/** A scripted office-hours conversation: the six-question framing, then the thesis. */
+export function officeHoursTranscript(deal: string): Array<string | Record<string, unknown>> {
+  const thesis = scriptFor("clean", deal)["cfo-office-hours"] as Record<string, unknown>;
+  return [
+    "Before we touch any numbers — in one paragraph, what decision are you trying to make, and by when?",
+    "What exactly is the unit of analysis here? What's in scope, and what's explicitly out?",
+    "Where does the durable value come from — cost, revenue, optionality, risk, or positioning — and durable for whom?",
+    "What happens to the business in three years if this isn't funded? Don't tell me 'do nothing = $0'.",
+    "Which of your load-bearing assumptions would you bet against if you had to? That's the one to diligence first.",
+    thesis,
+  ];
+}
+
+/**
+ * Run one stateless office-hours turn. The caller holds the message history and
+ * posts it each turn, so this works unchanged on a stateful server or stateless
+ * serverless functions.
+ */
+export async function sessionTurn(registry: SkillRegistry, deal: string, messages: LlmMessage[]) {
+  const skill = registry.get("cfo-office-hours");
+  const gateway = new ProviderGateway(
+    [new TranscriptProvider({ id: "office-hours", transcript: officeHoursTranscript(deal) })],
+    { tenant: "console", routes: { "*": { primary: { provider: "office-hours", model: "claude-fable-5" } } } },
+  );
+  const store = new ArtifactStore();
+  return runInteractiveTurn({ skill, gateway, store, parentObjectId: deal, messages });
 }

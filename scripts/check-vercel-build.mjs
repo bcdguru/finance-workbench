@@ -13,7 +13,7 @@ import assert from "node:assert/strict";
 
 const out = mkdtempSync(join(tmpdir(), "fw-vercel-"));
 try {
-  for (const fn of ["skills", "models", "run"]) {
+  for (const fn of ["skills", "models", "run", "session"]) {
     await esbuild.build({
       entryPoints: [`api/${fn}.ts`],
       bundle: true,
@@ -25,22 +25,27 @@ try {
     });
   }
 
-  const run = (await import(pathToFileURL(join(out, "run.mjs")).href)).default;
-  const res = {
-    statusCode: 0,
-    body: null,
-    status(s) { this.statusCode = s; return this; },
-    json(d) { this.body = d; return this; },
-  };
-  await run({ body: { deal: "vercel build check", modelId: "model-a" } }, res);
+  const mkRes = () => ({ statusCode: 0, body: null, status(s) { this.statusCode = s; return this; }, json(d) { this.body = d; return this; } });
 
-  assert.equal(res.statusCode, 200, "handler did not return 200");
+  // /api/run — the headless chain
+  const run = (await import(pathToFileURL(join(out, "run.mjs")).href)).default;
+  const runRes = mkRes();
+  await run({ body: { deal: "vercel build check", modelId: "model-a" } }, runRes);
+  assert.equal(runRes.statusCode, 200, "run handler did not return 200");
   assert.deepEqual(
-    res.body.artifacts.map((a) => a.verdict),
+    runRes.body.artifacts.map((a) => a.verdict),
     ["READY_TO_REVIEW", "GREEN", "PROCEED_WITH_VERIFICATIONS"],
     "chain verdicts changed unexpectedly",
   );
-  console.log("Vercel build check OK — esbuild bundles all 3 functions and the chain runs (200).");
+
+  // /api/session — one interactive turn
+  const session = (await import(pathToFileURL(join(out, "session.mjs")).href)).default;
+  const sesRes = mkRes();
+  await session({ body: { deal: "vercel build check", messages: [{ role: "user", content: "hi" }] } }, sesRes);
+  assert.equal(sesRes.statusCode, 200, "session handler did not return 200");
+  assert.equal(sesRes.body.status, "active", "session should ask a question on the first turn");
+
+  console.log("Vercel build check OK — esbuild bundles all 4 functions; chain (200) and session (200) run.");
 } finally {
   rmSync(out, { recursive: true, force: true });
 }

@@ -48,15 +48,15 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 
 ```bash
 npm install            # workspaces (Node 20+)
-npm run test:all       # every suite below — 80 tests across all modules
+npm run test:all       # every suite below — 86 tests across all modules
 
 # or per module:
 npm test               # harness — gateway routing/fallback/metering, JSON-schema validator,
-                       #   artifact store, registry, drivers, runner, + CFO chain e2e (27)
+                       #   artifact store, registry, drivers, runner, interactive sessions, + CFO chain e2e (31)
 npm run test:model     # CFDM entities — provenance requiredness, enum/type validation (6)
 npm run test:adapter-sdk # certification suite passes/fails conformant + broken adapters (5)
 npm run test:sap       # SAP FI — OData client (mock), mappers, certification, paging, incremental (17)
-npm run test:console   # console-core + serverless handlers (9)
+npm run test:console   # console-core + serverless handlers + interactive office-hours session (11)
 npm run test:web       # CFO pipeline model + FP&A flux/KPI model + workbench renders (16)
 
 npm run demo           # watch the chain run on a scripted provider

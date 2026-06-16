@@ -56,3 +56,38 @@ function estimateTokens(req: CompletionRequest): number {
   const s = (req.system ?? "") + req.messages.map((m) => m.content).join("");
   return Math.ceil(s.length / 4);
 }
+
+/**
+ * Deterministic provider for interactive sessions. Returns the Nth scripted
+ * response based on how many user turns are in the request — so it is stateless
+ * (no internal counter) and behaves identically on a stateful local server or a
+ * stateless serverless function. A transcript ends with the final artifact object.
+ */
+export interface TranscriptProviderOptions {
+  id: string;
+  /** Ordered responses: question strings, then the final artifact object. */
+  transcript: Array<string | Record<string, unknown>>;
+}
+
+export class TranscriptProvider implements LlmProvider {
+  readonly id: string;
+
+  constructor(private opts: TranscriptProviderOptions) {
+    this.id = opts.id;
+  }
+
+  async complete(req: CompletionRequest, model: string): Promise<CompletionResult> {
+    const userTurns = req.messages.filter((m) => m.role === "user").length;
+    const idx = Math.min(Math.max(userTurns - 1, 0), this.opts.transcript.length - 1);
+    const entry = this.opts.transcript[idx];
+    const text = typeof entry === "string" ? entry : JSON.stringify(entry);
+    const structured = typeof entry === "string" ? undefined : entry;
+    return {
+      text,
+      structured,
+      usage: { inputTokens: estimateTokens(req), outputTokens: Math.ceil(text.length / 4) },
+      providerId: this.id,
+      modelId: model,
+    };
+  }
+}
