@@ -38,6 +38,7 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 |---|---|
 | [@fw/canonical-model](packages/canonical-model) | CFDM v0.1 entities with mandatory provenance |
 | [@fw/adapter-sdk](packages/adapter-sdk) | adapter contract + certification skeleton |
+| [@fw/access](packages/access) | **Phase 1** — RBAC policy engine (persona + ledger + entity scope) + append-only audit log |
 | [@fw/adapter-sap-fi](packages/adapters/sap-fi) | **Phase 1** — SAP FI/CO read-only adapter (GL, cost centers, TB, journals) → CFDM, certified |
 | [@fw/harness](harness) | provider gateway, skill registry/runner, artifact store |
 | [skills/](skills) | CFO chain ported from finance-gstack (office-hours → strategic-review → forensic-audit) |
@@ -48,16 +49,17 @@ The contracts and the LLM-agnostic harness exist and are tested. See [docs/deliv
 
 ```bash
 npm install            # workspaces (Node 20+)
-npm run test:all       # every suite below — 86 tests across all modules
+npm run test:all       # every suite below — 97 tests across all modules
 
 # or per module:
 npm test               # harness — gateway routing/fallback/metering, JSON-schema validator,
                        #   artifact store, registry, drivers, runner, interactive sessions, + CFO chain e2e (31)
 npm run test:model     # CFDM entities — provenance requiredness, enum/type validation (6)
 npm run test:adapter-sdk # certification suite passes/fails conformant + broken adapters (5)
+npm run test:access    # RBAC evaluate (persona/ledger/entity scope) + audit log (6)
 npm run test:sap       # SAP FI — OData client (mock), mappers, certification, paging, incremental (17)
 npm run test:console   # console-core + serverless handlers + interactive office-hours session (11)
-npm run test:web       # CFO pipeline model + FP&A flux/KPI model + workbench renders (16)
+npm run test:web       # CFO + FP&A models, RBAC access model, workbench/shell renders (21)
 
 npm run demo           # watch the chain run on a scripted provider
 npm run console        # local Office Hours console at http://localhost:4173
